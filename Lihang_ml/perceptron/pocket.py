@@ -2,6 +2,7 @@
 # Tend to converge to a local optimal solution
 import numpy as np
 
+MAX_ITERATE_TIMES = 100
 initial_w = 0
 initial_b = 0
 initial_mu = 1
@@ -38,23 +39,22 @@ def error_count(data, labels, w, b):
 			count += 1
 	return count
 
-def model_train(data, labels, w, b, mu):
+def model_train(data, labels, w, b, mu, iterate_times = MAX_ITERATE_TIMES):
 	length = labels.shape[0]
 	w_test = np.zeros((data.shape[1], ))
 	b_test = 0
-	while True:
+	while iterate_times > 0:
 		for index in range(length):
 			if labels[index] * (np.dot(w, data[index]) + b) <= 0:
 				w_test = w + mu * labels[index] * data[index]
 				b_test = b + mu * labels[index]
-				print(w_test)
-				print(b_test)
 				if error_count(data, labels, w_test, b_test) < error_count(data, labels, w, b):
 					w = w_test
 					b = b_test
 					break
-		else:
-			break
+#		else:
+#			break
+		iterate_times -= 1
 	return w, b
 
 if __name__ == "__main__":
